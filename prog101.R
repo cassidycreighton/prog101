@@ -6,6 +6,9 @@
 
 library(marinecs100b)
 
+"I editted prog101 to complete the PROG101 module"
+
+
 # Guiding questions -------------------------------------------------------
 
 # What does KEFJ stand for?
