@@ -12,7 +12,8 @@ install.packages("lubridate")
 library(lubridate)
 
 
-
+#shetches
+#https://docs.google.com/document/d/10Id_rbNV1mUp05d4fbuG8CrDAaPq5bhT8hHGHkbXCEo/edit?usp=sharing
 
 # Guiding questions -------------------------------------------------------
 
