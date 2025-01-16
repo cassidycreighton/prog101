@@ -6,6 +6,11 @@
 
 library(marinecs100b)
 
+# Installed these packages in order to isolate date from date/time/zone
+install.packages("tidyverse")
+install.packages("lubridate")
+library(lubridate)
+
 
 
 
@@ -35,12 +40,13 @@ library(marinecs100b)
 #season
 #site
 # Link to sketch
+
 kefj_datetime
 kefj_site
 kefj_Aialik_datetime <- kefj_datetime[kefj_site == "Aialik"]
 kefj_interval <- kefj_datetime[2:length(kefj_datetime)]-kefj_datetime[1:length(kefj_datetime)-1]
 table(kefj_interval)
-
+#most common sampling interval: 30 minutes
 
 
 # Problem decomposition ---------------------------------------------------
@@ -50,17 +56,13 @@ table(kefj_interval)
 # Link to sketch
 
 # Plot the hottest day
-
 hottest_idx <- which.max(kefj_temperature)
-hottest_idx
 hottest_time <- kefj_datetime[hottest_idx]
-hottest_time
-hottest_day <- as.Date(kefj_datetime[hottest_idx])
+hottest_day <- as_date(hottest_time)
 hottest_site <- kefj_site[hottest_idx]
 hotday_start <- as.POSIXct(paste(hottest_day, "0:00"), tz = "Etc/GMT+8")
-hotday_start
-hotday_end <- as.POSIXct(paste(hottest_day, "23:59"), tz = "Etc/GMT+8")
-hotday_end
+hotday_end <- as.POSIXct(paste(hottest_day +1, "0:00"), tz = "Etc/GMT+8")
+#put day end as start of next day because otherwise it gets cut off early
 hotday_idx <- which(kefj_site == hottest_site &
   kefj_datetime >= hotday_start &
   kefj_datetime <= hotday_end)
@@ -68,15 +70,18 @@ hotday_datetime <- kefj_datetime[hotday_idx]
 hotday_temperature <- kefj_temperature[hotday_idx]
 hotday_exposure <- kefj_exposure[hotday_idx]
 plot_kefj(hotday_datetime, hotday_temperature, hotday_exposure)
-
+#for some reason the exposure at the end of the day does not show up on the plot
+#but the same code works fine for the cold section
+hotday_exposure
 # Repeat for the coldest day
 
 coldest_idx <- which.min(kefj_temperature)
 coldest_time <- kefj_datetime[coldest_idx]
-coldest_day <- as.Date(kefj_datetime[coldest_idx])
+coldest_day <- as_date(coldest_time)
 coldest_site <- kefj_site[coldest_idx]
 coldday_start <- as.POSIXct(paste(coldest_day, "0:00"), tz = "Etc/GMT+8")
-coldday_end <- as.POSIXct(paste(coldest_day, "23:59"), tz = "Etc/GMT+8")
+coldday_end <- as.POSIXct(paste(coldest_day +1 , "0:00"), tz = "Etc/GMT+8")
+#put day end as start of next day because otherwise it gets cut off early
 coldday_idx <- which(kefj_site == coldest_site &
                       kefj_datetime >= coldday_start &
                       kefj_datetime <= coldday_end)
@@ -89,6 +94,8 @@ plot_kefj(coldday_datetime, coldday_temperature, coldday_exposure)
 # What patterns do you notice in time, temperature, and exposure? Do those
 # patterns match your intuition, or do they differ?
 #temp spikes/dips when exposure is air or air/transition
+#match my intuition, water as a high specific heat
+#its temp is harder to change than air
 # How did Traiger et al. define extreme temperature exposure?
 #extreme warm: ≥25°C
 # extreme cold: ≤−4°C
@@ -101,13 +108,14 @@ hotday_interval <- hotday_datetime[2:length(hotday_datetime)]-hotday_datetime[1:
 sum(hotday_interval[hotday_exposed_idx])
 
 # Compare your answer to the visualization you made. Does it look right to you?
-
+#yes
 # Repeat this process for extreme cold exposure on the coldest day.
-coldday_exposed_idx <- which((coldday_exposure == "air" | coldday_exposure == "air/transition") & hotday_temperature <= -4)
+coldday_exposed_idx <- which((coldday_exposure == "air" | coldday_exposure == "air/transition") & coldday_temperature <= -4)
+coldday_exposed_idx
 coldday_interval <- coldday_datetime[2:length(coldday_datetime)]-coldday_datetime[1:length(coldday_datetime)-1]
 sum(coldday_interval[coldday_exposed_idx])
-
-# Putting it together -----------------------------------------------------
+length(coldday_interval)
+# Putting it together (optional)------------------------------------------------
 
 # Link to sketch
 
