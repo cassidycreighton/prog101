@@ -46,7 +46,7 @@ kefj_datetime
 kefj_site
 kefj_Aialik_datetime <- kefj_datetime[kefj_site == "Aialik"]
 kefj_interval <- kefj_datetime[2:length(kefj_datetime)]-kefj_datetime[1:length(kefj_datetime)-1]
-table(kefj_interval)
+table(kefj_site)
 #most common sampling interval: 30 minutes
 
 
